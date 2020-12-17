@@ -235,3 +235,7 @@ li {
 .btn-clear {
 	cursor: pointer;
 }
+
+.btn-space {
+	margin: 40px auto;
+}
