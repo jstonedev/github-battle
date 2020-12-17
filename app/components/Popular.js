@@ -1,46 +1,63 @@
-import React, { Fragment, useEffect, useState } from "react";
+import * as React from "react";
 import LanguageNav from "./LanguageNav";
 import { fetchPopularRepos } from "../utils/api";
+export default class Popular extends React.Component {
+	constructor(props) {
+		super(props);
 
-export default function Popular() {
-	const [selectedLanguage, setSelectedLanguage] = useState("All");
-	const [repos, setRepos] = useState(null);
-	const [error, setError] = useState(null);
+		this.state = {
+			selectedLanguage: "All",
+			repos: null,
+			error: null,
+		};
 
-	useEffect(() => {
-		updateLanguage(selectedLanguage);
-	}, []);
+		this.updateLanguage = this.updateLanguage.bind(this);
+		this.isLoading = this.isLoading.bind(this);
+	}
+	componentDidMount() {
+		this.updateLanguage(this.state.selectedLanguage);
+	}
+	updateLanguage(selectedLanguage) {
+		this.setState({
+			selectedLanguage,
+			error: null,
+			repos: null,
+		});
 
-	const updateLanguage = (languageSelected) => {
-		setSelectedLanguage(languageSelected);
-		setRepos(null);
-		setError(null);
-
-		fetchPopularRepos(languageSelected)
-			.then((repos) => setRepos(repos))
-			.then(() => setError(null))
-			.catch(() => {
+		fetchPopularRepos(selectedLanguage)
+			.then((repos) =>
+				this.setState({
+					repos,
+					error: null,
+				})
+			)
+			.catch((error) => {
 				console.warn("Error fetching repos: ", error);
-				setError("There was an error fetching the repositiories!");
+
+				this.setState({
+					error: `There was an error fetching the repositories.`,
+				});
 			});
-	};
+	}
+	isLoading() {
+		return this.state.repos === null && this.state.error === null;
+	}
+	render() {
+		const { selectedLanguage, repos, error } = this.state;
 
-	const isLoading = () => {
-		return repos === null && error === null;
-	};
+		return (
+			<React.Fragment>
+				<LanguageNav
+					selected={selectedLanguage}
+					onUpdateLanguage={this.updateLanguage}
+				/>
 
-	return (
-		<Fragment>
-			<LanguageNav
-				selected={selectedLanguage}
-				onUpdateLanguage={updateLanguage}
-			/>
+				{this.isLoading() && <p>Loading...</p>}
 
-			{isLoading() && <p>Loading...</p>}
+				{error && <p>{error}</p>}
 
-			{error && <p>{error}</p>}
-
-			{repos && <pre>{JSON.stringify(repos, null, 2)}</pre>}
-		</Fragment>
-	);
+				{repos && <pre>{JSON.stringify(repos, null, 2)}</pre>}
+			</React.Fragment>
+		);
+	}
 }
