@@ -10,7 +10,19 @@ function Battle() {
 	const [battle, setBattle] = useState(false);
 
 	if (battle) {
-		return <Results playerOne={playerOne} playerTwo={playerTwo} />;
+		return (
+			<Results
+				playerOne={playerOne}
+				playerTwo={playerTwo}
+				resetBattle={() => resetBattle()}
+			/>
+		);
+	}
+
+	function resetBattle() {
+		setPlayerOne(null);
+		setPlayerTwo(null);
+		setBattle(false);
 	}
 
 	return (
@@ -49,7 +61,7 @@ function Battle() {
 					<button
 						className="btn dark-btn btn-space"
 						onClick={() => setBattle(true)}>
-						Battle
+						BATTLE
 					</button>
 				)}
 			</div>
