@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { battle } from "../utils/api";
 import Card from "./Card";
 import ProfileList from "./ProfileList";
+import Loading from "./Loading";
 
 function Results({ playerOne, playerTwo, resetBattle }) {
 	const [winner, setWinner] = useState(null);
@@ -25,7 +26,7 @@ function Results({ playerOne, playerTwo, resetBattle }) {
 	}, []);
 
 	if (isLoading === true) {
-		return <p>Loading...</p>;
+		return <Loading text="Battling" />;
 	}
 
 	if (error) {
